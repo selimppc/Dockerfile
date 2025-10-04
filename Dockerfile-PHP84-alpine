@@ -3,7 +3,7 @@ FROM surnet/alpine-wkhtmltopdf:3.22.0-0.12.6-full AS wkhtml
 
 # ---- your PHP base
 FROM php:8.4.12-fpm-alpine3.22
-LABEL maintainer="developer@hwg.nl"
+LABEL maintainer="selimppc@gmail.com"
 
 # Update and install essential libraries and PHP dependencies
 RUN apk update && apk add --no-cache \
