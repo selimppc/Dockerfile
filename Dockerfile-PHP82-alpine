@@ -1,0 +1,68 @@
+FROM php:8.2.14-fpm-alpine3.19
+LABEL maintainer="selimppc@gmail.com"
+
+# Update and install essential libraries and PHP dependencies
+RUN apk update && apk add --no-cache \
+    shadow \
+    curl \
+    tini \
+    supervisor \
+    jpegoptim \
+    optipng \
+    pngquant \
+    gifsicle \
+    composer \
+    libwebp-tools \
+    ghostscript \
+    libgcc libstdc++ libx11 glib libxrender libxext libintl \
+    ttf-dejavu ttf-droid ttf-freefont ttf-liberation \
+    mysql-client \
+    bash \
+    icu-libs \
+    icu-dev
+
+# Install pdo_mysql and intl extensions
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql intl
+
+# Clean up the development packages
+RUN apk del icu-dev
+
+# Required for wkhtmltopdf (add additional repo for compatibility)
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing openssl1.1-compat
+
+# Download and install PHP Extension Installer
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions
+
+# Install additional PHP extensions
+RUN install-php-extensions \
+    opcache \
+    mcrypt \
+    redis \
+    sysvsem \
+    zip \
+    bcmath \
+    gd \
+    exif \
+    pcntl \
+    soap \
+    imagick \
+    ctype \
+    dom \
+    fileinfo \
+    simplexml \
+    xml \
+    xmlreader \
+    xmlwriter
+
+# Copy wkhtmltopdf binary for PDF generation
+COPY --from=madnight/docker-alpine-wkhtmltopdf:0.12.5-alpine3.13 /bin/wkhtmltopdf /bin/wkhtmltopdf
+
+# Set up PHP user permissions and configurations
+RUN adduser -D -h /home/php -u 1000 php && \
+    usermod -u 1000 php && \
+    usermod -s /bin/ash php && \
+    usermod -m -d /home/php php && \
+    chown -R php /var/log && \
+    chmod -R g+w /var/log
