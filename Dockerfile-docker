@@ -1,0 +1,35 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI Docker image — Docker + AWS CLI + jq + kubectl
+# Single-arch build (builds for the host machine's architecture)
+#
+# Build:
+#   docker build -t selimppc/docker:v2 -f docker/ci/Dockerfile-docker .
+#   docker push selimppc/docker:v2
+# ─────────────────────────────────────────────────────────────────────────────
+
+FROM docker:27-cli
+
+RUN apk add --no-cache \
+    aws-cli \
+    bash \
+    curl \
+    docker-cli-compose \
+    git \
+    jq \
+    openssh-client \
+    postgresql-client
+
+ARG KUBECTL_VERSION=v1.32.3
+RUN ARCH=$(uname -m) && \
+    case "$ARCH" in \
+      x86_64)  ARCH="amd64" ;; \
+      aarch64) ARCH="arm64" ;; \
+    esac && \
+    curl -fsSL -o /usr/local/bin/kubectl \
+      "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl" && \
+    chmod +x /usr/local/bin/kubectl && \
+    kubectl version --client
+
+ENV LANG=C.UTF-8
+
+CMD ["bash"]

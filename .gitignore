@@ -1,1 +1,40 @@
 # gitignore
+.vscode/
+node_modules/
+dist/
+*.log
+.env
+.DS_Store
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# Optional: Ignore build artifacts
+build/
+# Optional: Ignore coverage reports
+coverage/
+# Optional: Ignore temporary files
+tmp/
+# Optional: Ignore OS-specific files
+Thumbs.db
+Desktop.ini
+# Optional: Ignore IDE-specific files
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+# Optional: Ignore log files
+logs/
+# Optional: Ignore test results
+test-results/
+# Optional: Ignore package-lock.json if you want to allow different versions of dependencies
+package-lock.json
+# Optional: Ignore yarn.lock if you want to allow different versions of dependencies
+yarn.lock
+# Optional: Ignore npm-debug.log
+npm-debug.log
+# Optional: Ignore yarn-error.log
+yarn-error.log
+

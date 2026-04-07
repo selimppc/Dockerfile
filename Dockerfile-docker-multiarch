@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CI Docker image — Docker + AWS CLI + jq + kubectl
+# Multi-arch build (amd64 + arm64 in a single manifest)
+#
+# Requires Docker Buildx:
+#   docker buildx create --name multiarch --use
+#   docker buildx build --platform linux/amd64,linux/arm64 \
+#     -t selimppc/docker:v2 \
+#     -f docker/ci/Dockerfile-docker-multiarch --push .
+# ─────────────────────────────────────────────────────────────────────────────
+
+FROM docker:27-cli
+
+RUN apk add --no-cache \
+    aws-cli \
+    bash \
+    curl \
+    docker-cli-compose \
+    git \
+    jq \
+    openssh-client \
+    postgresql-client
+
+ARG TARGETARCH
+ARG KUBECTL_VERSION=v1.32.3
+RUN curl -fsSL -o /usr/local/bin/kubectl \
+      "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl" && \
+    chmod +x /usr/local/bin/kubectl
+
+ENV LANG=C.UTF-8
+
+CMD ["bash"]
