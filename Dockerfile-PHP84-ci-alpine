@@ -3,7 +3,8 @@ FROM php:8.4-cli-alpine3.22
 LABEL maintainer="selimppc@gmail.com"
 LABEL description="Minimal PHP 8.4 CI — lint + test"
 
-RUN apk add --no-cache git unzip bash
+# Add vips + gifsicle as runtime deps (gifsicle is needed for animated-GIF test fixtures)
+RUN apk add --no-cache git unzip bash vips gifsicle
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
@@ -21,6 +22,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
         gd \
         exif \
         pcov \
+        vips \
     && rm -rf /tmp/* /var/cache/apk/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
